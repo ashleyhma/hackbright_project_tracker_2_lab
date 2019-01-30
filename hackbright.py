@@ -95,6 +95,18 @@ def assign_grade(github, title, grade):
 
     print("{}'s {} project has been updated to {}".format(github, title, grade))
 
+def add_project(title, description, max_grade):
+
+    QUERY = """
+        INSERT INTO projects (title, description, max_grade)
+        VALUES (:title, :description, :max_grade)
+        """
+    db.session.execute(QUERY, {'title':title, 'description':description, 'max_grade':max_grade})
+    db.session.commit()
+
+    print("{}: {} with max grade of {} has been added!".format(title, description, max_grade))
+
+
 def handle_input():
     """Main loop.
 
@@ -129,6 +141,16 @@ def handle_input():
         elif command == "assign_grade":
             github, title, grade = args
             assign_grade(github, title, grade)
+
+        elif command == "add_project":
+            if len(args) == 3:
+                title, description, max_grade = args
+            else:
+                title = args.pop(0)
+                max_grade = args.pop(-1)
+                description = (" ").join(args)
+            
+            add_project(title, description, max_grade)
 
         else:
             if command != "quit":
